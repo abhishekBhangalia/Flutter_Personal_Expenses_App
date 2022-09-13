@@ -10,26 +10,31 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
     return Container(
       height: 500,
       child: transactionList.isEmpty
-          ? Column(
-              children: [
-                Text(
-                  'No transaction is added yet !',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 300,
-                  child: Image.asset(
-                    'assets/images/waiting.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ],
+          ? LayoutBuilder(
+              builder: (ctx, constraints) {
+                return Column(
+                  children: [
+                    Text(
+                      'No transaction is added yet !',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    SizedBox(
+                      height: constraints.maxHeight * 0.1,
+                    ),
+                    Container(
+                      height: constraints.maxHeight * 0.6,
+                      child: Image.asset(
+                        'assets/images/waiting.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                );
+              },
             )
           : ListView.builder(
               itemCount: transactionList.length,
@@ -57,11 +62,26 @@ class TransactionList extends StatelessWidget {
                       DateFormat.yMMMd()
                           .format(transactionList[index].dateTime),
                     ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                      onPressed: () => _deleteTransaction(transactionList[index].id),
-                    ),
+                    trailing: mediaQuery.size.width > 400
+                        ? TextButton(
+                          
+                            onPressed: () =>
+                                _deleteTransaction(transactionList[index].id),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text('delete',style: TextStyle(color: Theme.of(context).errorColor),),
+                                Icon(Icons.delete,color: Theme.of(context).errorColor,),
+                              ],
+                            ),
+
+                            )
+                        : IconButton(
+                            icon: Icon(Icons.delete),
+                            color: Theme.of(context).errorColor,
+                            onPressed: () =>
+                                _deleteTransaction(transactionList[index].id),
+                          ),
                   ),
                 );
 
